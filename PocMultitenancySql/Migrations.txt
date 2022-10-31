@@ -1,0 +1,26 @@
+﻿USE master  --***** IMPORTANTE *****--
+GO
+
+CREATE LOGIN u0001 WITH PASSWORD = 'Pa$$w0rd' 
+GO
+
+USE empleadosdb	--***** IMPORTANTE *****--
+GO
+
+CREATE USER u0001 FOR LOGIN u0001 WITH DEFAULT_SCHEMA = u0001
+GO
+
+CREATE SCHEMA u0001 AUTHORIZATION u0001
+GO
+
+GRANT ALTER, INSERT, SELECT, DELETE, UPDATE, REFERENCES ON SCHEMA::u0001 TO u0001
+GO
+
+GRANT CREATE TABLE TO u0001
+GO
+
+dotnet ef migrations add ModeloInicial --project PocMultitenancySql.csproj --context EmpleadosDbContext --output-dir Migrations --verbose
+
+dotnet ef database update --context EmpleadosDbContext --configuration Release --connection "Server=MYSERVER;Database=mydb;User Id=someUser;Password=Pa$$w0rd;" --verbose
+
+****NOTA****: si el password contiene signos de pesos, deben escaparse, por ejemplo con Powershell se escapan con el caracter `. Ejemplo: `$
